@@ -1,0 +1,33 @@
+
+Task 2: Deploy a web server VM instance
+
+  create VM:
+    >> gcloud config set compute/region us-central1
+    >> gcloud config set compute/zone us-central1-a
+    >> gcloud compute instances create bloghost --image="debian-9-stretch-v20200910" --image-project debian-cloud --tags="http-server" --metadata startup-script='apt-get update
+    apt-get install apache2 php php-mysql -y
+    service apache2 restart'
+
+
+Task 3: Create a Cloud Storage bucket using the gsutil command line
+
+  >> export LOCATION=US
+  >> gsutil mb -l $LOCATION gs://$DEVSHELL_PROJECT_ID
+  >> gsutil cp gs://cloud-training/gcpfci/my-excellent-blog.png my-excellent-blog.png
+  >> gsutil cp my-excellent-blog.png gs://$DEVSHELL_PROJECT_ID/my-excellent-blog.png
+  >> gsutil acl ch -u allUsers:R gs://$DEVSHELL_PROJECT_ID/my-excellent-blog.png
+
+
+Task 4: Create the Cloud SQL instance
+
+  >> gcloud sql instances create blog-db --database-version=MYSQL_5_7 --root-password=password123 --authorized-networks=$bloghost_instace_ext_ip/32
+  >> gcloud sql users create blogdbuser --instance=blog-db --host=% --password=123456
+
+ 
+ Task 5: Configure an application in a Compute Engine instance to use Cloud SQL
+  
+  ssh into bloghost_instace then
+  >> cd /var/www/html
+  >> // create index page
+  >> sudo service apache2 restart
+  >> // modify the index.php and add db ip and bucket id and test the connection

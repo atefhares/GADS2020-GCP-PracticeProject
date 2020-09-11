@@ -1,0 +1,81 @@
+Task 1:  Explore the GCP Console
+
+  create bucket:
+
+    >> gsutil mb gs://qwiklabs-gcp-00-b81abdc50468
+
+  create VM:
+    >> gcloud config set compute/region us-central1
+    >> gcloud config set compute/zone us-central1-c
+    >> gcloud compute instances create first-vm --machine-type=f1-micro --tags http-server
+
+
+  Create an IAM service account:
+    >> gcloud iam service-accounts create test-service-account  --description="test-service-account" --display-name="test-service-account"
+    >> gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT --member serviceAccount:test-service-account@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com --role roles/editor
+
+===========================================================
+
+Task 2: Explore Cloud Shell
+
+  Use Cloud Shell to set up the environment variables for this task:
+
+    >> MY_BUCKET_NAME_1=qwiklabs-gcp-00-b81abdc50468
+    >> MY_BUCKET_NAME_2=qwiklabs-gcp-00-b81abdc50468testtesttest
+    >> MY_REGION=us-central1
+
+  Move the credentials file you created earlier into Cloud Shell:
+    DONE
+
+  Create a second Cloud Storage bucket and verify it in the GCP Console:
+
+    >> gsutil mb gs://$MY_BUCKET_NAME_2
+
+  Use the gcloud command line to create a second virtual machine:
+
+    >> MY_ZONE=us-central1-b
+
+    >> gcloud config set compute/zone $MY_ZONE
+
+    >> MY_VMNAME=second-vm
+
+    >> gcloud compute instances create $MY_VMNAME --machine-type "n1-standard-1" --image-project "debian-cloud" --image-family "debian-9" --subnet "default"
+
+    >> gcloud compute instances list
+
+  Use the gcloud command line to create a second service account:
+
+    >> gcloud iam service-accounts create test-service-account2 --display-name "test-service-account2"
+    >> gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT --member serviceAccount:test-service-account2@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com --role roles/viewer
+
+
+===========================================================
+
+Task 3: Work with Cloud Storage in Cloud Shell
+
+  Download a file to Cloud Shell and copy it to Cloud Storage:
+
+    >> gsutil cp gs://cloud-training/ak8s/cat.jpg cat.jpg
+    >> gsutil cp cat.jpg gs://$MY_BUCKET_NAME_1
+    >> gsutil cp gs://$MY_BUCKET_NAME_1/cat.jpg gs://$MY_BUCKET_NAME_2/cat.jpg
+
+  Set the access control list for a Cloud Storage object:
+    >> gsutil acl get gs://$MY_BUCKET_NAME_1/cat.jpg  > acl.txt
+    >> cat acl.txt
+
+    >> gsutil acl set private gs://$MY_BUCKET_NAME_1/cat.jpg
+
+    >> gsutil acl get gs://$MY_BUCKET_NAME_1/cat.jpg  > acl-2.txt
+    >> cat acl-2.txt
+
+  Authenticate as a service account in Cloud Shell:
+
+    >> gcloud auth activate-service-account --key-file key.json
+    >> gsutil cp gs://$MY_BUCKET_NAME_1/cat.jpg ./cat-copy.jpg // [403 error]
+    >> gsutil cp gs://$MY_BUCKET_NAME_2/cat.jpg ./cat-copy.jpg
+
+    >> gcloud config set account student-02-8e9dcec523fd@qwiklabs.net
+    >> gsutil cp gs://$MY_BUCKET_NAME_1/cat.jpg ./copy2-of-cat.jpg // now working fine
+
+
+    >> gsutil iam ch allUsers:objectViewer gs://$MY_BUCKET_NAME_1
