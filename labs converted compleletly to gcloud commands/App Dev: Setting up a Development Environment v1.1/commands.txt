@@ -1,0 +1,25 @@
+Task 1: Creating a Compute Engine Virtual Machine Instance
+
+  >> gcloud config set compute/region us-central1
+  >> gcloud config set compute/zone us-central1-a
+  >> gcloud compute instances create "dev-instance" --tags="http-server" --scopes https://www.googleapis.com/auth/cloud-platform
+
+
+
+Task 2: Install software on the VM instance
+
+  >> // ssh into dev-instance
+  >> sudo apt-get update
+  >> sudo apt-get install git
+  >> curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+  >> sudo apt install nodejs
+
+Task 3: Configure the VM to Run Application Software
+
+  >> git clone https://github.com/GoogleCloudPlatform/training-data-analyst
+  >> cd ~/training-data-analyst/courses/developingapps/nodejs/devenv/
+  >> sudo node server/app.js
+  >> // ctrl + c
+  >> sudo apt-get install npm 
+  >> npm install
+  >> node list-gce-instances.js
